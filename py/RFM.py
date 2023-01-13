@@ -3,6 +3,7 @@ import pandas as pd
 from sklearn import preprocessing
 from pyarrow import csv
 import pyarrow.parquet as pq
+import common
 
 
 class RFM:
@@ -29,14 +30,7 @@ class RFM:
         time_diff = last_day - current_day
         time_in_second = [x.total_seconds() for x in time_diff]
         final_df['t_dat'] = time_in_second
-        self.save_data(final_df, './src/rfm_result/rfm.parquet')
-
-    def get_data(self, path):
-        data = pq.read_pandas(path).to_pandas()
-        return data
-
-    def save_data(self, data, path):
-        data.to_parquet(path, engine='pyarrow', index=False)
+        common.save_data(final_df, './src/rfm_result/rfm.parquet')
 
     def get_score(self, level, data):
         score = []
@@ -67,4 +61,4 @@ class RFM:
             score = self.get_score(quantiles, temp_data)
             new_col_name = rfm_col_name[k] + '_' + k
             df[new_col_name] = score
-            self.save_data(df, './src/rfm_result/rfm_grade.parquet')
+            common.save_data(df, './src/rfm_result/rfm_grade.parquet')
